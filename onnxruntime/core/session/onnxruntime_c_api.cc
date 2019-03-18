@@ -20,7 +20,7 @@
 #include "core/common/callback.h"
 #include "core/framework/tensorprotoutils.h"
 #include "core/framework/onnxruntime_typeinfo.h"
-#include "core/session/inference_session.h"
+#include "core/session/session.h"
 #include "core/framework/data_types.h"
 #include "abi_session_options_impl.h"
 
@@ -366,8 +366,8 @@ ORT_API_STATUS_IMPL(OrtAddCustomOpDomain, _In_ OrtSessionOptions* options, OrtCu
 ORT_API_STATUS_IMPL(OrtCreateSession, _In_ OrtEnv* env, _In_ const ORTCHAR_T* model_path,
                     _In_ const OrtSessionOptions* options, _Out_ OrtSession** out) {
   API_IMPL_BEGIN
-  auto sess = std::make_unique<::onnxruntime::InferenceSession>(
-      options == nullptr ? onnxruntime::SessionOptions() : options->value, env->loggingManager);
+  auto sess = Session::Create(options == nullptr ? onnxruntime::SessionOptions() : options->value,
+                              env->loggingManager);
   Status status;
   if (options != nullptr) {
     if (!options->custom_op_paths.empty()) {
@@ -558,7 +558,6 @@ ORT_API_STATUS_IMPL(OrtGetTensorMemSizeInBytesFromTensorProto, _In_ const void* 
   ORT_API(void, OrtRelease##INPUT_TYPE, Ort##INPUT_TYPE* value) { \
     delete reinterpret_cast<REAL_TYPE*>(value);                   \
   }
-
 
 ORT_API_STATUS_IMPL(OrtSessionGetInputCount, _In_ const OrtSession* sess, _Out_ size_t* out) {
   API_IMPL_BEGIN

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-#include "core/session/inference_session.h"
+#include "core/session/session.h"
 #include "core/graph/graph_viewer.h"
 #include "core/graph/model.h"
 #include "core/optimizer/graph_transformer.h"
@@ -107,7 +107,8 @@ TEST(GraphTransformationTests, FuseConvBNMulAddUnsqueeze) {
 
   SessionOptions so;
   so.session_logid = "GraphTransformationTests.LoadModelToTransform";
-  InferenceSession session_object{so, &DefaultLoggingManager()};
+  auto session_ptr = Session::Create(so, &DefaultLoggingManager());
+  Session& session_object = *session_ptr;
   ASSERT_TRUE(session_object.Load(model_uri).IsOK());
 
   std::shared_ptr<Model> p_model;
@@ -132,7 +133,8 @@ TEST(GraphTransformationTests, FuseConvActivation) {
   std::string activations[] = {"relu", "sigmoid", "softsign", "tanh", "leakyrelu"};
 
   for (std::string act : activations) {
-    InferenceSession session_object{so, &DefaultLoggingManager()};
+    auto session_ptr = Session::Create(so, &DefaultLoggingManager());
+    Session& session_object = *session_ptr;
     std::string model_uri = MODEL_FOLDER + "fusion/conv_" + act + ".onnx";
     ASSERT_TRUE(session_object.Load(model_uri).IsOK());
 
@@ -150,7 +152,8 @@ TEST(GraphTransformationTests, FuseConvBNNoBias) {
 
   SessionOptions so;
   so.session_logid = "GraphTransformationTests.LoadModelToTransform";
-  InferenceSession session_object{so, &DefaultLoggingManager()};
+  auto session_ptr = Session::Create(so, &DefaultLoggingManager());
+  Session& session_object = *session_ptr;
   ASSERT_TRUE(session_object.Load(model_uri).IsOK());
 
   std::shared_ptr<Model> p_model;
@@ -168,7 +171,8 @@ TEST(GraphTransformationTests, FuseConvMulNoBias) {
 
   SessionOptions so;
   so.session_logid = "GraphTransformationTests.LoadModelToTransform";
-  InferenceSession session_object{so, &DefaultLoggingManager()};
+  auto session_ptr = Session::Create(so, &DefaultLoggingManager());
+  Session& session_object = *session_ptr;
   ASSERT_TRUE(session_object.Load(model_uri).IsOK());
 
   std::shared_ptr<Model> p_model;
@@ -188,7 +192,8 @@ TEST(GraphTransformationTests, FuseConvAddNoBias) {
 
   SessionOptions so;
   so.session_logid = "GraphTransformationTests.LoadModelToTransform";
-  InferenceSession session_object{so, &DefaultLoggingManager()};
+  auto session_ptr = Session::Create(so, &DefaultLoggingManager());
+  Session& session_object = *session_ptr;
   ASSERT_TRUE(session_object.Load(model_uri).IsOK());
 
   std::shared_ptr<Model> p_model;
@@ -209,7 +214,8 @@ TEST(GraphTransformationTests, FuseConvBNMulAddUnsqueezeNoBias) {
 
   SessionOptions so;
   so.session_logid = "GraphTransformationTests.LoadModelToTransform";
-  InferenceSession session_object{so, &DefaultLoggingManager()};
+  auto session_ptr = Session::Create(so, &DefaultLoggingManager());
+  Session& session_object = *session_ptr;
   ASSERT_TRUE(session_object.Load(model_uri).IsOK());
 
   std::shared_ptr<Model> p_model;
@@ -234,7 +240,8 @@ TEST(GraphTransformationTests, FuseConvAddMul3D) {
 
   SessionOptions so;
   so.session_logid = "GraphTransformationTests.LoadModelToTransform";
-  InferenceSession session_object{so, &DefaultLoggingManager()};
+  auto session_ptr = Session::Create(so, &DefaultLoggingManager());
+  Session& session_object = *session_ptr;
   ASSERT_TRUE(session_object.Load(model_uri).IsOK());
 
   std::shared_ptr<Model> p_model;
@@ -255,7 +262,8 @@ TEST(GraphTransformationTests, MatMulAddFusion_two_input) {
 
   SessionOptions so;
   so.session_logid = "GraphTransformationTests.LoadModelToTransform";
-  InferenceSession session_object{so, &DefaultLoggingManager()};
+  auto session_ptr = Session::Create(so, &DefaultLoggingManager());
+  Session& session_object = *session_ptr;
   ASSERT_TRUE(session_object.Load(model_uri).IsOK());
 
   std::shared_ptr<Model> p_model;
@@ -273,7 +281,8 @@ TEST(GraphTransformationTests, MatMulAddFusion_three_input) {
 
   SessionOptions so;
   so.session_logid = "GraphTransformationTests.LoadModelToTransform";
-  InferenceSession session_object{so, &DefaultLoggingManager()};
+  auto session_ptr = Session::Create(so, &DefaultLoggingManager());
+  Session& session_object = *session_ptr;
   ASSERT_TRUE(session_object.Load(model_uri).IsOK());
 
   std::shared_ptr<Model> p_model;
@@ -291,7 +300,8 @@ TEST(GraphTransformationTests, Gemm_Relu_three_input) {
 
   SessionOptions so;
   so.session_logid = "GraphTransformationTests.LoadModelToTransform";
-  InferenceSession session_object{so, &DefaultLoggingManager()};
+  auto session_ptr = Session::Create(so, &DefaultLoggingManager());
+  Session& session_object = *session_ptr;
   ASSERT_TRUE(session_object.Load(model_uri).IsOK());
 
   std::shared_ptr<Model> p_model;
@@ -309,7 +319,9 @@ TEST(GraphTransformationTests, FuseConvBnAddMulFloat16) {
 
   SessionOptions so;
   so.session_logid = "GraphTransformationTests.LoadModelToTransform";
-  InferenceSession session_object{so, &DefaultLoggingManager()};
+
+  auto session_ptr = Session::Create(so, &DefaultLoggingManager());
+  Session& session_object = *session_ptr;
   ASSERT_TRUE(session_object.Load(model_uri).IsOK());
 
   std::shared_ptr<Model> p_model;

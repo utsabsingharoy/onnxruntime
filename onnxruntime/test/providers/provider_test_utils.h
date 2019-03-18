@@ -23,7 +23,7 @@
 #include "core/util/math_cpuonly.h"
 
 namespace onnxruntime {
-class InferenceSession;
+class Session;
 
 namespace test {
 // unfortunately std::optional is in C++17 so use a miniversion of it
@@ -310,7 +310,7 @@ class OpTester {
   }
 
   void ExecuteModel(Model& model,
-                    InferenceSession& session_object,
+                    Session& session_object,
                     ExpectResult expect_result,
                     const std::string& expected_failure_string,
                     const RunOptions* run_options,

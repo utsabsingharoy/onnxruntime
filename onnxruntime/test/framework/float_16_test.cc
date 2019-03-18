@@ -98,7 +98,7 @@ ONNX_NAMESPACE::OpSchema GetMulFP16Schema() {
 
 static const std::string MUL_MODEL_URI = "testdata/mul_16.pb";
 
-void RunSession(InferenceSession& session_object,
+void RunSession(Session& session_object,
                 RunOptions& run_options,
                 std::vector<int64_t>& dims_x,
                 std::vector<MLFloat16>& values_x,
@@ -135,7 +135,8 @@ TEST(Float16_Tests, Mul_16_Test) {
   so.session_logid = "InferenceSessionTests.NoTimeout";
 
   std::shared_ptr<CustomRegistry> registry = std::make_shared<CustomRegistry>();
-  InferenceSession session_object{so, &DefaultLoggingManager()};
+  auto session_ptr = Session::Create(so, &DefaultLoggingManager());
+  Session& session_object = *session_ptr;
   EXPECT_TRUE(session_object.RegisterCustomRegistry(registry).IsOK());
   auto mulfp16_schema = GetMulFP16Schema();
   std::vector<OpSchema> schemas = {mulfp16_schema};

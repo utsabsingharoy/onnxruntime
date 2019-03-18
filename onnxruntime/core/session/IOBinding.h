@@ -79,7 +79,7 @@ class IOBinding {
   AllocatorPtr GetCPUAllocator(int id, onnxruntime::ProviderType provider_type) const;
 
  private:
-  friend InferenceSession;
+  friend class InferenceSession;
 
   IOBinding(const SessionState& session_state);
   const SessionState& session_state_;

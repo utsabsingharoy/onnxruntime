@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-#include "core/session/inference_session.h"
+#include "core/session/session.h"
 
 #include <algorithm>
 #include <functional>
@@ -190,7 +190,7 @@ static const std::string FOO_TRUNCATE_MODEL_URI = "testdata/foo_2.pb";
 
 static const std::string OPTIONAL_MODEL1_URI = "testdata/optional_1.pb";
 
-void RunSession(InferenceSession& session_object,
+void RunSession(Session& session_object,
                 RunOptions& run_options,
                 std::vector<int64_t>& dims_x,
                 std::vector<float>& values_x,
@@ -227,7 +227,8 @@ TEST(CustomKernelTests, CustomKernelWithBuildInSchema) {
   // Register a foo kernel which is doing Add, but bind to Mul.
   std::shared_ptr<CustomRegistry> registry = std::make_shared<CustomRegistry>();
 
-  InferenceSession session_object{so, &DefaultLoggingManager()};
+  auto session_ptr = Session::Create(so, &DefaultLoggingManager());
+  Session& session_object = *session_ptr;
   EXPECT_TRUE(session_object.RegisterCustomRegistry(registry).IsOK());
   auto def = FooKernelDef("Mul");
 
@@ -259,7 +260,8 @@ TEST(CustomKernelTests, CustomKernelWithCustomSchema) {
 
   std::shared_ptr<CustomRegistry> registry = std::make_shared<CustomRegistry>();
 
-  InferenceSession session_object{so, &DefaultLoggingManager()};
+  auto session_ptr = Session::Create(so, &DefaultLoggingManager());
+  Session& session_object = *session_ptr;
   EXPECT_TRUE(session_object.RegisterCustomRegistry(registry).IsOK());
 
   //register foo schema
@@ -305,7 +307,8 @@ TEST(CustomKernelTests, CustomKernelWithOptionalOutput) {
   //Register a foo kernel which is doing Add, but bind to Mul.
   EXPECT_TRUE(registry->RegisterCustomKernel(def, CreateOptionalOpKernel).IsOK());
 
-  InferenceSession session_object{so, &DefaultLoggingManager()};
+  auto session_ptr = Session::Create(so, &DefaultLoggingManager());
+  Session& session_object = *session_ptr;
   EXPECT_TRUE(session_object.RegisterCustomRegistry(registry).IsOK());
   EXPECT_TRUE(session_object.Load(OPTIONAL_MODEL1_URI).IsOK());
   EXPECT_TRUE(session_object.Initialize().IsOK());

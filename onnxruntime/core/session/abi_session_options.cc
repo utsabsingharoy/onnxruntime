@@ -4,7 +4,7 @@
 #include "core/session/onnxruntime_c_api.h"
 #include <cstring>
 #include <cassert>
-#include "core/session/inference_session.h"
+#include "core/session/session.h"
 #include "abi_session_options_impl.h"
 
 OrtSessionOptions::~OrtSessionOptions() {

@@ -11,7 +11,7 @@
 #include "core/common/logging/logging.h"
 #include "core/common/logging/sinks/clog_sink.h"
 #include "core/framework/tensorprotoutils.h"
-#include "core/session/inference_session.h"
+#include "core/session/session.h"
 #include "test/util/include/default_providers.h"
 
 using namespace ::onnxruntime::logging;
@@ -50,10 +50,10 @@ void Check<float>(const OpTester::Data& expected_data, const Tensor& output_tens
 #endif
 
   for (int i = 0; i < size; ++i) {
-    if (std::isinf(expected[i])){  // Test infinity for equality
+    if (std::isinf(expected[i])) {  // Test infinity for equality
       EXPECT_EQ(expected[i], output[i]);
     } else if (std::isnan(expected[i])) {
-      EXPECT_TRUE(std::isnan(output[i])) << "Expected output " << i  << " to be NaN";
+      EXPECT_TRUE(std::isnan(output[i])) << "Expected output " << i << " to be NaN";
     } else {
       if (!has_abs_err && !has_rel_err) {
         // the default for existing tests
@@ -266,7 +266,7 @@ std::unique_ptr<onnxruntime::Model> OpTester::BuildGraph() {
 }
 
 void OpTester::ExecuteModel(Model& model,
-                            InferenceSession& session_object,
+                            Session& session_object,
                             ExpectResult expect_result,
                             const std::string& expected_failure_string,
                             const RunOptions* run_options,
@@ -414,7 +414,8 @@ void OpTester::Run(ExpectResult expect_result,
     bool has_run = false;
 
     if (execution_providers) {
-      InferenceSession session_object{so};
+      auto session_ptr = Session::Create(so);
+      Session& session_object = *session_ptr;
 
       ASSERT_TRUE(!execution_providers->empty()) << "Empty execution providers vector.";
       std::string provider_types;
@@ -431,7 +432,8 @@ void OpTester::Run(ExpectResult expect_result,
         if (excluded_provider_types.count(provider_type) > 0)
           continue;
 
-        InferenceSession session_object{so};
+        auto session_ptr = Session::Create(so);
+        Session& session_object = *session_ptr;
 
         for (auto& custom_session_registry : custom_session_registries_)
           session_object.RegisterCustomRegistry(custom_session_registry);

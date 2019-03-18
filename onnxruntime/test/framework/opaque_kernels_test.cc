@@ -11,7 +11,7 @@
 #include "core/graph/model.h"
 #include "core/graph/op.h"
 #include "core/providers/cpu/cpu_execution_provider.h"
-#include "core/session/inference_session.h"
+#include "core/session/session.h"
 #include "gtest/gtest.h"
 
 #include "test/providers/provider_test_utils.h"
@@ -283,7 +283,8 @@ TEST_F(OpaqueTypeTests, RunModel) {
   // Both the session and the model need custom registries
   // so we construct it here before the model
   std::shared_ptr<CustomRegistry> registry = std::make_shared<CustomRegistry>();
-  InferenceSession session_object{so, &DefaultLoggingManager()};
+  auto session_ptr = Session::Create(so, &DefaultLoggingManager());
+  Session& session_object = *session_ptr;
   EXPECT_TRUE(session_object.RegisterCustomRegistry(registry).IsOK());
 
   auto ops_schema = GetConstructSparseTensorSchema();
